@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PessoaFisicaRepo {a
+public class PessoaFisicaRepo {
     private List<PessoaFisica> ListaPessoaFisica=new ArrayList();
     public void inserir(PessoaFisica pessoa){
         ListaPessoaFisica.add(pessoa);
