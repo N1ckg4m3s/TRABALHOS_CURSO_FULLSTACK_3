@@ -1,5 +1,3 @@
-package cadastropoo;
-
 import cadastropoo.model.PessoaFisica;
 import cadastropoo.model.PessoaFisicaRepo;
 import cadastropoo.model.PessoaJuridica;
