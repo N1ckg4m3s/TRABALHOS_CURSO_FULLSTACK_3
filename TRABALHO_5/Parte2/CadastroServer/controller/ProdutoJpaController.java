@@ -118,9 +118,10 @@ public class ProdutoJpaController implements Serializable {
         try{
             Connection Conec=ConectorBD.getConnection();
             PreparedStatement ps = ConectorBD.getPrepared(Conec,"UPDATE Produto SET \n"+
-                    "Quantidade=?, PrecoVenda=?");
+                    "Quantidade=?, PrecoVenda=? WHERE idProduto=?");
             ps.setInt(1, produto.getQuantidade());
             ps.setFloat(2, produto.getPrecoVenda());
+            ps.setInt(3, produto.getIdProduto());
             
             ps.executeUpdate();
             
