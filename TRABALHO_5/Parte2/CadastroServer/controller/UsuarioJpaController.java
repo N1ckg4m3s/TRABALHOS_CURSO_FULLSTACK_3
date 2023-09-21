@@ -154,6 +154,10 @@ public class UsuarioJpaController implements Serializable {
             if (Result.next()){
                 return new Usuario(Result.getInt("idUsuario"),login,senha);
             }
+            ps.close();
+            ConectorBD.close(ps);
+            ConectorBD.close(Conec);
+
         }catch(SQLException e){
             System.out.println("Exception  UsuarioJpaController.java " + e);
         }

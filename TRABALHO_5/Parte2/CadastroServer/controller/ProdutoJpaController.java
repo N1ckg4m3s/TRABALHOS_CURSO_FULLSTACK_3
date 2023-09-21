@@ -54,29 +54,6 @@ public class ProdutoJpaController implements Serializable {
         }
     }
 
-    public void edit(Produto produto) throws NonexistentEntityException, Exception {
-        EntityManager em = null;
-        try {
-            em = getEntityManager();
-            em.getTransaction().begin();
-            produto = em.merge(produto);
-            em.getTransaction().commit();
-        } catch (Exception ex) {
-            String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0) {
-                Integer id = produto.getIdProduto();
-                if (findProduto(id) == null) {
-                    throw new NonexistentEntityException("The produto with id " + id + " no longer exists.");
-                }
-            }
-            throw ex;
-        } finally {
-            if (em != null) {
-                em.close();
-            }
-        }
-    }
-
     public void destroy(Integer id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
@@ -122,15 +99,6 @@ public class ProdutoJpaController implements Serializable {
         }
     }
 
-    public Produto findProduto(Integer id) {
-        EntityManager em = getEntityManager();
-        try {
-            return em.find(Produto.class, id);
-        } finally {
-            em.close();
-        }
-    }
-
     public int getProdutoCount() {
         EntityManager em = getEntityManager();
         try {
@@ -143,7 +111,51 @@ public class ProdutoJpaController implements Serializable {
             em.close();
         }
     }
-
+    
+    
+    
+    public void edit(Produto produto){
+        try{
+            Connection Conec=ConectorBD.getConnection();
+            PreparedStatement ps = ConectorBD.getPrepared(Conec,"UPDATE Produto SET \n"+
+                    "Quantidade=?, PrecoVenda=?");
+            ps.setInt(1, produto.getQuantidade());
+            ps.setFloat(2, produto.getPrecoVenda());
+            
+            ps.executeUpdate();
+            
+            ConectorBD.close(ps);
+            ConectorBD.close(Conec);
+        }catch(Exception e){
+            System.out.println("Exception  ProdutoJpaController.java, edit: " + e);
+            
+            //UPDATE
+        }
+    }
+    
+    public Produto findProduto(Integer id) {
+        try {
+            Connection Conec=ConectorBD.getConnection();
+            PreparedStatement ps = ConectorBD.getPrepared(Conec,"SELECT * FROM Produto WHERE idProduto=?");
+            ps.setInt(1, id);
+            
+            System.out.println("ID para encontrar o produto é "+id);
+            
+            ResultSet Result = ps.executeQuery();
+            if(Result.next()){
+                String Nome=Result.getString("Nome");
+                int Quant=Result.getInt("Quantidade");
+                float ValotUnit=Result.getFloat("PrecoVenda");
+                return new Produto(id, Nome, Quant, ValotUnit);
+            }
+            ConectorBD.close(ps);
+            ConectorBD.close(Conec);
+        } catch(SQLException e) {
+            System.out.println("Exception  ProdutoJpaController.java, findProduto: " + e);
+        }
+        return null;
+    }
+    
     public Object GetProdutos() {
         try{
             Connection Conec=ConectorBD.getConnection();
@@ -157,9 +169,13 @@ public class ProdutoJpaController implements Serializable {
                 float Preco=Result.getFloat("PrecoVenda");
                 ListaProdutos.add(new Produto(Id, Nome, Quant, Preco));
             }
+            
+            ConectorBD.close(ps);
+            ConectorBD.close(Conec);
+            
             return ListaProdutos;
         }catch(SQLException e){
-            System.out.println("Exception  ProdutoJpaController.java " + e);
+            System.out.println("Exception  ProdutoJpaController.javam GetProdutos: " + e);
         }
         return null;
 
