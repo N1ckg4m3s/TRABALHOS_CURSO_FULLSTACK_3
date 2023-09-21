@@ -50,7 +50,7 @@ public class Movimentacao implements Serializable {
     @Column(name = "Quantidade")
     private Integer quantidade;
     @Column(name = "ValorUnitario")
-    private Long valorUnitario;
+    private float valorUnitario;
     @Column(name = "Tipo")
     private String tipo;
 
